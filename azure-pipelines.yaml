@@ -23,4 +23,15 @@ stages:
         Dockerfile: 'App/Dockerfile'
         tags: |
           $(tag)
-  
+    
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+    - job: Deploy
+      steps:
+        - task: AzureWebAppContainer@1
+          inputs:
+            azureSubscription: $(azureSubscription)
+            appName: $(appServiceName)
+            resourceGroupName: $(resourceGroupName)
+            imageName: '$(containerRegistry)/$(imageRepository):$(tag)'

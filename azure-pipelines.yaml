@@ -17,15 +17,10 @@ stages:
     steps:
     - task: Docker@2
       inputs:
-        command: 'build'
+        containerRegistry: $(dockerRegistryServiceConnection)
+        command: 'buildAndPush'
         repository: '$(containerRegistry)/$(imageRepository)'
         Dockerfile: 'App/Dockerfile'
         tags: |
           $(tag)
-
-    - task: Docker@2
-      inputs:
-        command: 'push'
-        repository: '$(containerRegistry)/$(imageRepository)'
-        tags: |
-          $(tag)
+  

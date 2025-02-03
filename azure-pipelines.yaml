@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerRegistryServiceConnection: '$(acrServiceConnection)'
+  imageRepository: 'app'
+  containerRegistry: '$(dockerRegistryServiceConnection).azurecr.io'
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: Docker@2
+      inputs:
+        command: 'build'
+        repository: '$(containerRegistry)/$(imageRepository)'
+        Dockerfile: 'App/Dockerfile'
+        tags: |
+          $(tag)
+
+    - task: Docker@2
+      inputs:
+        command: 'push'
+        repository: '$(containerRegistry)/$(imageRepository)'
+        tags: |
+          $(tag)
